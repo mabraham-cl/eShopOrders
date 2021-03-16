@@ -35,7 +35,7 @@ namespace eShopOrders.Business
             var responseString = await _httpClient.GetStringAsync(customerUri);
 
             if(string.IsNullOrEmpty(responseString))
-                throw new EShopOrdersErrorResponse($"The customer with email, {email} is not found.", 404);
+                throw new EShopOrdersException($"The customer with email, {email} is not found.", 404);
 
             var customerDetail = JsonConvert.DeserializeObject<CustomerDetail>(responseString);
 

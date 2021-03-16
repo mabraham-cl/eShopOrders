@@ -49,21 +49,21 @@ namespace eShopOrders.API.Controllers
                 _logger.LogInformation($"Request received for GetMostRecentOrder for customer with email {user} and customerId {customerId}.", user, customerId);
                 return Ok(await _customerOrderService.GetCustomerOrderAsync(user, customerId));
             }
-            catch(EShopOrdersErrorResponse ordersErrorResponse)
+            catch (EShopOrdersException exception)
             {
-                _logger.LogError($"The following error occured on handling the request for customer with email {user} and customerId {customerId}. Error Message, {ordersErrorResponse.Message}. StackTrace {ordersErrorResponse.StackTrace}. HttpStatusCode {ordersErrorResponse.HttpStatusCode}", user, customerId);
+                _logger.LogError($"The following error occured on handling the request for customer with email {user} and customerId {customerId}. Error Message, {exception.Message}. StackTrace {exception.StackTrace}. HttpStatusCode {exception.HttpStatusCode}", user, customerId);
 
-                if (ordersErrorResponse.HttpStatusCode == 400)
-                    return new BadRequestObjectResult(ordersErrorResponse);
-                else if (ordersErrorResponse.HttpStatusCode == 404)
-                    return new NotFoundObjectResult(ordersErrorResponse);
+                if (exception.HttpStatusCode == 400)
+                    return new BadRequestObjectResult(new EShopOrdersErrorResponse() { HttpStatus = exception.HttpStatusCode, Message = exception.Message }); 
+                else if (exception.HttpStatusCode == 404)
+                    return new NotFoundObjectResult(new EShopOrdersErrorResponse() { HttpStatus = exception.HttpStatusCode, Message = exception.Message });
                 else
-                    return new ObjectResult(ordersErrorResponse);
+                    return new ObjectResult(new EShopOrdersErrorResponse() { HttpStatus = exception.HttpStatusCode, Message = exception.Message });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError($"The following error occured on handling the request for customer with email {user} and customerId {customerId}. {ex.Message}.", user, customerId);
-                return new ObjectResult(new EShopOrdersErrorResponse($"Internal Server Error! {ex.Message}", 500));
+                return new ObjectResult(new EShopOrdersErrorResponse() { HttpStatus =500, Message = $"Internal Server Error! {ex.Message}", DeveloperMessage = ex.StackTrace }); 
             }
         }
 

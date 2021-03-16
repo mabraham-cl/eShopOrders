@@ -32,15 +32,15 @@ namespace eShopOrders.Business
         public async Task<CustomerOrder> GetCustomerOrderAsync(string user, string customerId)
         {
             if(string.IsNullOrEmpty(user) || string.IsNullOrWhiteSpace(user))
-                throw new EShopOrdersErrorResponse($"Please provide a valid email id.", 400);
+                throw new EShopOrdersException($"Please provide a valid email id.", 400);
 
             if (string.IsNullOrEmpty(customerId) || string.IsNullOrWhiteSpace(customerId))
-                throw new EShopOrdersErrorResponse($"Please provide a valid customer id.", 400);
+                throw new EShopOrdersException($"Please provide a valid customer id.", 400);
 
             var customerDetail = await _customerService.GetCustomerByEmailAsync(user);
 
             if (customerDetail.CustomerId != customerId)
-                throw new EShopOrdersErrorResponse($"user's email address {user} does not match the customer number {customerId}", 400);
+                throw new EShopOrdersException($"user's email address {user} does not match the customer number {customerId}", 400);
 
             var orderDetail = await _orderService.GetOrderDetailAsync(customerId);
 

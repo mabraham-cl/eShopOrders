@@ -41,7 +41,7 @@ namespace eShopOrders.UnitTests
         {
             // Arrange
             var mockService = new Mock<ICustomerOrderService>();
-            mockService.Setup(x => x.GetCustomerOrderAsync("cat.owner@mmtdigital.co.uk", "C34454")).Throws(new EShopOrdersErrorResponse($"The customer with email, cat.owner@mmtdigital.co.uk is not found.", 404)); 
+            mockService.Setup(x => x.GetCustomerOrderAsync("cat.owner@mmtdigital.co.uk", "C34454")).Throws(new EShopOrdersException($"The customer with email, cat.owner@mmtdigital.co.uk is not found.", 404));
             var mockIlogger = new Mock<ILogger<OrdersController>>();
             var controller = new OrdersController(mockIlogger.Object, mockService.Object);
 
@@ -52,7 +52,7 @@ namespace eShopOrders.UnitTests
             var okResult = Assert.IsType<NotFoundObjectResult>(result);
             var model = Assert.IsAssignableFrom<EShopOrdersErrorResponse>(
                 okResult.Value);
-            Assert.Equal(404, model.HttpStatusCode);
+            Assert.Equal(404, model.HttpStatus);
             Assert.Equal("The customer with email, cat.owner@mmtdigital.co.uk is not found.", model.Message);
         }
 
@@ -61,7 +61,7 @@ namespace eShopOrders.UnitTests
         {
             // Arrange
             var mockService = new Mock<ICustomerOrderService>();
-            mockService.Setup(x => x.GetCustomerOrderAsync("", "C34454")).Throws(new EShopOrdersErrorResponse($"Please provide a valid email id.", 400));
+            mockService.Setup(x => x.GetCustomerOrderAsync("", "C34454")).Throws(new EShopOrdersException($"Please provide a valid email id.", 400));
             var mockIlogger = new Mock<ILogger<OrdersController>>();
             var controller = new OrdersController(mockIlogger.Object, mockService.Object);
 
@@ -72,7 +72,7 @@ namespace eShopOrders.UnitTests
             var okResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<EShopOrdersErrorResponse>(
                 okResult.Value);
-            Assert.Equal(400, model.HttpStatusCode);
+            Assert.Equal(400, model.HttpStatus);
             Assert.Equal("Please provide a valid email id.", model.Message);
         }
 
@@ -81,7 +81,7 @@ namespace eShopOrders.UnitTests
         {
             // Arrange
             var mockService = new Mock<ICustomerOrderService>();
-            mockService.Setup(x => x.GetCustomerOrderAsync("cat.owner@mmtdigital.co.uk", "")).Throws(new EShopOrdersErrorResponse($"Please provide a valid customer id.", 400));
+            mockService.Setup(x => x.GetCustomerOrderAsync("cat.owner@mmtdigital.co.uk", "")).Throws(new EShopOrdersException($"Please provide a valid customer id.", 400));
             var mockIlogger = new Mock<ILogger<OrdersController>>();
             var controller = new OrdersController(mockIlogger.Object, mockService.Object);
 
@@ -92,7 +92,7 @@ namespace eShopOrders.UnitTests
             var okResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<EShopOrdersErrorResponse>(
                 okResult.Value);
-            Assert.Equal(400, model.HttpStatusCode);
+            Assert.Equal(400, model.HttpStatus);
             Assert.Equal("Please provide a valid customer id.", model.Message);
         }
 
@@ -100,17 +100,18 @@ namespace eShopOrders.UnitTests
         {
             return new CustomerOrder()
             {
-                Customer = new CustomerName() { FirstName= "Charlie", LastName  = "Cat" },
-                Order = new OrderDetail() {
+                Customer = new CustomerName() { FirstName = "Charlie", LastName = "Cat" },
+                Order = new OrderDetail()
+                {
                     DeliveryAddress = "1a, Uppingham Gate, Uppingham, LE15 9NY",
                     DeliveryExpected = "7-May-2021",
                     OrderDate = "11-Sep-2020",
-                    OrderItems = new List<ProductDetail>() { 
+                    OrderItems = new List<ProductDetail>() {
                     new ProductDetail{PriceEach = 12.5M, Quantity=1, Product="'I love my pet' t-shirt" },
                     new ProductDetail{PriceEach =15.99M, Quantity=1, Product="'I love my pet' t-shirt" }
                     },
-                    OrderNumber=4
-                    }
+                    OrderNumber = 4
+                }
             };
 
         }

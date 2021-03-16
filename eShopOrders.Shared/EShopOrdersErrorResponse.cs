@@ -1,24 +1,28 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace eShopOrders.Shared
 {
-    public class EShopOrdersErrorResponse : Exception
+    public class EShopOrdersErrorResponse
     {
         /// <summary>
-        /// Custom Exception that can be thrown from API
+        /// Message which describes the error
         /// </summary>
-        /// <param name="message">Message to the user</param>
-        /// <param name="httpStatusCode">Http status code</param>
-        public EShopOrdersErrorResponse(string message, int httpStatusCode) : base(message)
-        {
-            HttpStatusCode = httpStatusCode;
-        }
+        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
+        public string Message { get; set; }
 
         /// <summary>
-        /// HTTPS Status Code
+        /// The HTTP status code of the error
         /// </summary>
-        public int HttpStatusCode { get; set; }
+        [JsonProperty("status")]
+        public int HttpStatus { get; set; }
+
+        /// <summary>
+        /// A message e.g: a stack trace
+        /// </summary>
+        [JsonProperty("developerMessage", NullValueHandling = NullValueHandling.Ignore)]
+        public string DeveloperMessage { get; set; }
     }
 }

@@ -4,12 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace eShopOrders.Business
 {
     /// <summary>
     /// This class deals with dependency injection for database context
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class DBContextDependencyInjection
     {
         /// <summary>
